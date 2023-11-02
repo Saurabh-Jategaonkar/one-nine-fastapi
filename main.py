@@ -8,6 +8,7 @@ from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from mangum import Mangum
 
+import subprocess
 
 class Book(BaseModel):
     name: str
@@ -69,3 +70,23 @@ async def get_book(book_id: str):
             return book
 
     raise HTTPException(404, f"Book ID {book_id} not found in database.")
+
+@app.post("/install")
+async def install(bot_name: str, org_name: str, description: str, lp_text: str, model_name: str):
+    result = {
+        "bot_name": bot_name,
+        "org_name": org_name,
+        "description": description,
+        "lp_text": lp_text,
+        "model_name": model_name
+    }
+
+    print(result)
+
+    # if result['bot_name'] == 'mistral':
+    #     try:
+    #         subprocess.run(["wget", "https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/resolve/main/mistral-7b-instruct-v0.1.Q4_K_M.gguf"])
+    #     except Exception as e:
+    #         print(f"An error occurred: {e}")
+
+    return result
