@@ -82,13 +82,24 @@ async def install(assistant: Assistant):
         "lp_text": assistant.lp_text,
         "model_name": assistant.model_name
     }
+    # print(result)
+    model_details = {
+        "install_path": f"installed_models/{result['bot_name']}/mistral-7b-instruct-v0.1.Q4_K_M.gguf"
+    }
 
-    print(result)
-
-    # if result['bot_name'] == 'mistral':
-    #     try:
-    #         subprocess.run(["wget", "https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/resolve/main/mistral-7b-instruct-v0.1.Q4_K_M.gguf"])
-    #     except Exception as e:
-    #         print(f"An error occurred: {e}")
+    if result['model_name'] == 'mistral':
+        try:
+            subprocess.run(["cd", "installed_models/"])
+            subprocess.run(["mkdir", f"{result['bot_name']}/"])
+            subprocess.run(["cd", f"{result['bot_name']}/"])
+            if (subprocess.run(["wget", "https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/resolve/main/mistral-7b-instruct-v0.1.Q4_K_M.gguf"])) == 0:
+                result['bot_path'] = model_details['install_path']
+                result['is_downloaded'] = True
+            else:
+                result['bot_path'] = 'No Path. Download failed.'
+                result['is_downloaded'] = False
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return {'message': 'Error while downloading the model.'}
 
     return result

@@ -2,3 +2,4 @@
 lib
 *.zip
 venv
+.env
