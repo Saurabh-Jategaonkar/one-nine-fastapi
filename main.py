@@ -88,10 +88,12 @@ async def install(assistant: Assistant):
     }
 
     if result['model_name'] == 'mistral':
+        model_url = "https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/resolve/main/mistral-7b-instruct-v0.1.Q4_K_M.gguf"
+        
         try:
-            result['subprocess'] = subprocess.run(f"cd installed_models && mkdir {result['bot_name']} && cd {result['bot_name']}", shell=True, check=True)
+            result['subprocess'] = subprocess.run(f"cd installed_models && mkdir {result['bot_name']} && cd {result['bot_name']} && wget {model_url} -P .", shell=True, check=True)
 
-            if (subprocess.run(["wget", "https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/resolve/main/mistral-7b-instruct-v0.1.Q4_K_M.gguf"])) == 0:
+            if (result['subprocess']['returncode']) == 0:
                 result['bot_path'] = model_details['install_path']
                 result['is_downloaded'] = True
             else:
@@ -99,6 +101,9 @@ async def install(assistant: Assistant):
                 result['is_downloaded'] = False
         except Exception as e:
             print(f"An error occurred: {e}")
-            return {'message': 'Error while downloading the model.'}
+            return {'message': f'Error while downloading the model:\n {e}'}
+    
+    else:
+        return {'message': 'Please select a model.'}
 
     return result
