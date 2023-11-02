@@ -88,16 +88,15 @@ async def install(assistant: Assistant):
     }
 
     if result['model_name'] == 'mistral':
-        model_url = """https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF
-        /resolve/main/mistral-7b-instruct-v0.1.Q4_K_M.gguf"""
+        model_url = """https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/resolve/main/mistral-7b-instruct-v0.1.Q4_K_M.gguf"""
         
         try:
-            result['subprocess'] = subprocess.run(f"cd installed_models && mkdir {result['bot_name']}", shell=True, check=True)
+            subprocess.run(f"cd installed_models && mkdir {result['bot_name']}", shell=True, check=True)
 
             directory_path = f"installed_models/{result['bot_name']}"
-            result = subprocess.run(f'cd {directory_path} && wget {model_url} -P .', shell=True, check=True)
+            result['subprocess'] = subprocess.run(f'cd {directory_path} && curl -O {model_url}', shell=True, check=True)
 
-            if (result['subprocess']['returncode']) == 0:
+            if (result['subprocess']) == 0:
                 result['bot_path'] = model_details['install_path']
                 result['is_downloaded'] = True
             else:
