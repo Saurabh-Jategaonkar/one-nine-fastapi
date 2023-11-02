@@ -89,9 +89,8 @@ async def install(assistant: Assistant):
 
     if result['model_name'] == 'mistral':
         try:
-            subprocess.run(["cd", "installed_models/"])
-            subprocess.run(["mkdir", f"{result['bot_name']}/"])
-            subprocess.run(["cd", f"{result['bot_name']}/"])
+            result['subprocess'] = subprocess.run(f"cd installed_models && mkdir {result['bot_name']} && cd {result['bot_name']}", shell=True, check=True)
+
             if (subprocess.run(["wget", "https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/resolve/main/mistral-7b-instruct-v0.1.Q4_K_M.gguf"])) == 0:
                 result['bot_path'] = model_details['install_path']
                 result['is_downloaded'] = True
