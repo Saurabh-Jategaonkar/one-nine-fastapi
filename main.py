@@ -16,6 +16,12 @@ class Book(BaseModel):
     price: float
     book_id: Optional[str] = uuid4().hex
 
+class Assistant(BaseModel):
+    bot_name: str
+    org_name: str
+    description: str
+    lp_text: str
+    model_name: str
 
 BOOKS_FILE = "books.json"
 BOOKS = []
@@ -37,11 +43,9 @@ async def root():
 async def random_book():
     return random.choice(BOOKS)
 
-
 @app.get("/list-books")
 async def list_books():
     return {"books": BOOKS}
-
 
 @app.get("/book_by_index/{index}")
 async def book_by_index(index: int):
@@ -49,7 +53,6 @@ async def book_by_index(index: int):
         return BOOKS[index]
     else:
         raise HTTPException(404, f"Book index {index} out of range ({len(BOOKS)}).")
-
 
 @app.post("/add-book")
 async def add_book(book: Book):
@@ -62,7 +65,6 @@ async def add_book(book: Book):
 
     return {"book_id": book.book_id}
 
-
 @app.get("/get-book")
 async def get_book(book_id: str):
     for book in BOOKS:
@@ -72,13 +74,13 @@ async def get_book(book_id: str):
     raise HTTPException(404, f"Book ID {book_id} not found in database.")
 
 @app.post("/install")
-async def install(bot_name: str, org_name: str, description: str, lp_text: str, model_name: str):
+async def install(assistant: Assistant):
     result = {
-        "bot_name": bot_name,
-        "org_name": org_name,
-        "description": description,
-        "lp_text": lp_text,
-        "model_name": model_name
+        "bot_name": assistant.bot_name,
+        "org_name": assistant.org_name,
+        "description": assistant.description,
+        "lp_text": assistant.lp_text,
+        "model_name": assistant.model_name
     }
 
     print(result)
