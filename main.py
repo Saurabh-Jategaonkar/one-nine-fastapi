@@ -8,8 +8,8 @@ from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from mangum import Mangum
 
-import subprocess
 import requests
+from datetime import datetime
 
 class Book(BaseModel):
     name: str
@@ -87,8 +87,10 @@ async def install(assistant: Assistant):
 
     if result['model_name'] == 'mistral':
         url = "https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/resolve/main/mistral-7b-instruct-v0.1.Q4_K_M.gguf"
-        output_folder = f"installed_models/{result['bot_name']}"
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        output_folder = f"installed_models/{result['bot_name']}_{timestamp}"
         output_file = os.path.join(output_folder, "mistral_model.gguf")
+
         os.makedirs(output_folder, exist_ok=False)
         
         response = requests.get(url)
@@ -98,9 +100,11 @@ async def install(assistant: Assistant):
                 file.write(response.content)
             print(f"File {output_file} downloaded successfully.")
             result['is_downloaded'] = f"File {output_file} downloaded successfully."
+            result['bot_path'] = output_folder + "/mistral_model.gguf"
         else:
             print(f"Failed to download file. Status code: {response.status_code}")
             result['is_downloaded'] = f"Failed to download file. Status code: {response.status_code}"
+            result['bot_path'] = None
     else:
         return {'message': 'Please select a valid model.'}
     return result
