@@ -72,13 +72,13 @@ async def prompt(promptInput: Prompt):
     conf = AutoConfig(Config(temperature=0.8, repetition_penalty=1.1,
                             batch_size=52, max_new_tokens=1024,
                             context_length=2048))
-    llm = AutoModelForCausalLM.from_pretrained("mistral-7b-instruct-v0.1.Q4_K_M.gguf",
+    llm = AutoModelForCausalLM.from_pretrained("installed_models/testbot_20231107190105/mistral_model.gguf",
             model_type="mistral", config = conf)
-    
-    while(promptInput['prompt']!="exit"):
-        mistral_prompt = f"<s>[INST] {prompt} [/INST]"
+
+    while(promptInput.prompt!="exit"):
+        input_prompt = promptInput.prompt
+        mistral_prompt = f"<s>[INST] {input_prompt} [/INST]"
         answer = llm(mistral_prompt, temperature = 0.7,
                 repetition_penalty = 1.15,
                 max_new_tokens = 2048)
-        print(answer)
-        prompt = str(input("prompt"))
+        return {'message': answer}
